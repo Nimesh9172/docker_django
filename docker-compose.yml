@@ -1,98 +1,98 @@
-  version: '3.9'
+version: '3.9'
 
-  services:
-    web:
-      build: .
-      container_name: django_app
-      entrypoint: ["./entrypoint.sh"]
-      env_file:
-        - .env
-      ports:
-        - "8000:8000"
-      depends_on:
-        - db
-      volumes:
-        - ./media:/app/media
-        - ./static:/app/static
+services:
+  web:
+    build: .
+    container_name: django_app
+    entrypoint: ["./entrypoint.sh"]
+    env_file:
+      - .env
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    volumes:
+      - ./media:/app/media
+      - ./static:/app/static
 
-    db:
-      image: postgres:16
-      container_name: postgres_db
-      environment:
-        - POSTGRES_DB=${POSTGRES_DB}
-        - POSTGRES_USER=${POSTGRES_USER}
-        - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      volumes:
-        - postgres_data:/var/lib/postgresql/data
+  db:
+    image: postgres:16
+    container_name: postgres_db
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
 
-    redis:
-      image: redis:7
-      container_name: redis
-      ports:
-        - "6379:6379"    
+  redis:
+    image: redis:7
+    container_name: redis
+    ports:
+      - "6379:6379"    
 
-    celery:
-      build: .
-      container_name: celery
-      entrypoint: ["./entrypoint-celery.sh"]   # overrides ENTRYPOINT
-      env_file:
-        - .env
-      depends_on:
-        - redis
-        - db
+  celery:
+    build: .
+    container_name: celery
+    entrypoint: ["./entrypoint-celery.sh"]   # overrides ENTRYPOINT
+    env_file:
+      - .env
+    depends_on:
+      - redis
+      - db
 
-    celery_beat:
-      build: .
-      entrypoint: ["./entrypoint-celery-beat.sh"]   # overrides ENTRYPOINT
-      env_file:
-        - .env
-      depends_on:
-        - redis
-        - db
-        - celery
-      
-    kafka:
-      image: bitnami/kafka:latest
-      container_name: kafka
-      environment:
-        - KAFKA_CFG_NODE_ID=${KAFKA_CFG_NODE_ID}
-        - KAFKA_ENABLE_KRAFT=${KAFKA_ENABLE_KRAFT}
-        - KAFKA_CFG_PROCESS_ROLES=${KAFKA_CFG_PROCESS_ROLES}
-        - KAFKA_CFG_LISTENERS=${KAFKA_CFG_LISTENERS}
-        - KAFKA_CFG_ADVERTISED_LISTENERS=${KAFKA_CFG_ADVERTISED_LISTENERS}
-        - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=${KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP}
-        - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=${KAFKA_CFG_CONTROLLER_LISTENER_NAMES}
-        - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=${KAFKA_CFG_CONTROLLER_QUORUM_VOTERS}
-        - ALLOW_PLAINTEXT_LISTENER=${ALLOW_PLAINTEXT_LISTENER}
+  celery_beat:
+    build: .
+    entrypoint: ["./entrypoint-celery-beat.sh"]   # overrides ENTRYPOINT
+    env_file:
+      - .env
+    depends_on:
+      - redis
+      - db
+      - celery
+    
+  kafka:
+    image: bitnami/kafka:latest
+    container_name: kafka
+    environment:
+      - KAFKA_CFG_NODE_ID=${KAFKA_CFG_NODE_ID}
+      - KAFKA_ENABLE_KRAFT=${KAFKA_ENABLE_KRAFT}
+      - KAFKA_CFG_PROCESS_ROLES=${KAFKA_CFG_PROCESS_ROLES}
+      - KAFKA_CFG_LISTENERS=${KAFKA_CFG_LISTENERS}
+      - KAFKA_CFG_ADVERTISED_LISTENERS=${KAFKA_CFG_ADVERTISED_LISTENERS}
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=${KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP}
+      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=${KAFKA_CFG_CONTROLLER_LISTENER_NAMES}
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=${KAFKA_CFG_CONTROLLER_QUORUM_VOTERS}
+      - ALLOW_PLAINTEXT_LISTENER=${ALLOW_PLAINTEXT_LISTENER}
 
-      ports:
-        - "9092:9092"
-      volumes:
-        - kafka_data:/bitnami/kafka
+    ports:
+      - "9092:9092"
+    volumes:
+      - kafka_data:/bitnami/kafka
 
-    kafka-ui:
-      image: provectuslabs/kafka-ui:latest
-      container_name: kafka_ui
-      ports:
-        - "8080:8080"
-      env_file:
-        - .env
-      depends_on:
-        - kafka
-
-
-    kafka_consumer:
-      build: .
-      container_name: kafka_consumer
-      entrypoint: ["./entrypoint-consumer.sh"]   # overrides ENTRYPOINT
-      env_file:
-        - .env
-      depends_on:
-        - kafka
-        - db
-        - web
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: kafka_ui
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+    depends_on:
+      - kafka
 
 
-  volumes:
-    postgres_data:
-    kafka_data:
+  kafka_consumer:
+    build: .
+    container_name: kafka_consumer
+    entrypoint: ["./entrypoint-consumer.sh"]   # overrides ENTRYPOINT
+    env_file:
+      - .env
+    depends_on:
+      - kafka
+      - db
+      - web
+
+
+volumes:
+  postgres_data:
+  kafka_data:
