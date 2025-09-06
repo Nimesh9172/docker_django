@@ -48,7 +48,3 @@ docker-compose down
 ## Notes
 - Make sure to update environment variables as needed in your Docker and Django settings.
 - For development, you can modify the code and restart the containers as needed.
-
----
-
-Feel free to update this README with more details about your project!
