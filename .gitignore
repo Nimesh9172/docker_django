@@ -1,0 +1,47 @@
+# Python
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+*.so
+*.egg
+*.egg-info/
+.eggs/
+
+# Virtualenv
+# .env
+.venv
+venv/
+ENV/
+env.bak/
+*.swp
+
+# Django
+db.sqlite3
+media/
+staticfiles/
+*.log
+
+# Migrations (optional: keep if you want them in git)
+*/migrations/*.py
+!*/migrations/__init__.py
+
+# IDEs & Editors
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Docker
+*.pid
+*.seed
+*.pid.lock
+docker-compose.override.yml
+docker-compose.local.yml
+postgres_data/
+kafka_data/
+redis_data/
