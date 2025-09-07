@@ -85,7 +85,7 @@ CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [("redis9", 6379)],  # or use your Docker/production Redis host
+            "hosts": [("redis", 6379)],  # or use your Docker/production Redis host
         },
     },
 }

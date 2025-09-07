@@ -18,4 +18,6 @@ python manage.py collectstatic --noinput
 
 # Start server
 echo "Starting Django with Gunicorn..."
-exec gunicorn docker_django.wsgi:application --bind 0.0.0.0:8000 --workers 3
+# exec gunicorn docker_django.wsgi:application --bind 0.0.0.0:8000 --workers 3
+exec daphne -b 0.0.0.0 -p 8000 docker_django.asgi:application
+
