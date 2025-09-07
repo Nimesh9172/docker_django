@@ -6,5 +6,4 @@ urlpatterns = [
     path('trigger-task/', trigger_celery_task, name='trigger_celery_task'),
     path('rider/location/', RiderLocationUpdateView.as_view(), name='rider-location'),
     path('rider/locations/', RiderLocationListView.as_view(), name='rider-locations'),
-
 ]
