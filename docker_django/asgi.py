@@ -11,12 +11,13 @@ import os
 
 from channels.routing import ProtocolTypeRouter, URLRouter
 from django.core.asgi import get_asgi_application
-from docker_django.jwt_auth_middleware import JWTAuthMiddleware
 import app.routing
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'docker_django.settings')
 
 application = get_asgi_application()
+
+from docker_django.jwt_auth_middleware import JWTAuthMiddleware
 
 
 application = ProtocolTypeRouter({
