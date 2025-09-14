@@ -1,7 +1,6 @@
 from urllib.parse import parse_qs
 from channels.middleware import BaseMiddleware
 from channels.db import database_sync_to_async
-from django.contrib.auth.models import AnonymousUser
 from rest_framework_simplejwt.tokens import UntypedToken
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from django.contrib.auth import get_user_model
@@ -16,6 +15,7 @@ def get_user(validated_token):
         user = jwt_auth.get_user(validated_token)
         return user
     except Exception:
+        from django.contrib.auth.models import AnonymousUser
         return AnonymousUser()
 
 class JWTAuthMiddleware(BaseMiddleware):
@@ -48,6 +48,7 @@ class JWTAuthMiddleware(BaseMiddleware):
 
         print("Subprotocols:", subprotocols, "Extracted token:", token)
         # Validate token
+
         if token:
             try:
                 validated_token = UntypedToken(token)
@@ -56,8 +57,10 @@ class JWTAuthMiddleware(BaseMiddleware):
 
                 scope["user"] = await get_user(validated_token)
             except Exception:
+                from django.contrib.auth.models import AnonymousUser
                 scope["user"] = AnonymousUser()
         else:
+            from django.contrib.auth.models import AnonymousUser
             scope["user"] = AnonymousUser()
 
         return await super().__call__(scope, receive, send)
