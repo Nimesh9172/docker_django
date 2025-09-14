@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 import os
 from pathlib import Path
+from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -85,10 +86,16 @@ CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [("redis", 6379)],  # or use your Docker/production Redis host
+            "hosts": [(os.environ.get("REDIS_CONFIG_HOST", "localhost"), int(os.environ.get("REDIS_CONFIG_PORT", 6379)))],
         },
     },
 }
+
+# CHANNEL_LAYERS = {
+#     "default": {
+#       "BACKEND": "channels.layers.InMemoryChannelLayer"
+#     }
+# }
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
@@ -124,6 +131,34 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# REST Framework settings
+REST_FRAMEWORK = {
+    'DEFAULT_VERSIONING_CLASS': 'rest_framework.versioning.NamespaceVersioning',
+    'DEFAULT_VERSION': 'v1',
+    'ALLOWED_VERSIONS': ['v1'],
+    'VERSION_PARAM': 'version',
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ],
+    'DEFAULT_THROTTLE_CLASSES': [
+       
+    ],
+    'DEFAULT_THROTTLE_RATES': {
+        'send_otp': '3/m',  # 3 requests per 2 minutes
+    },
+}
+
+# Simple JWT settings
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=30),
+    'ROTATE_REFRESH_TOKENS': False,
+    'BLACKLIST_AFTER_ROTATION': False,
+}
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
@@ -153,6 +188,13 @@ TIME_ZONE = "Asia/Kolkata"
 CELERY_TIMEZONE = TIME_ZONE
 CELERY_TASK_TRACK_STARTED = True
 CELERY_TASK_TIME_LIMIT = 30 * 60
+
+# Redis configuration
+REDIS_CONFIG = {
+    "HOST": os.environ.get("REDIS_CONFIG_HOST", "localhost"),
+    "PORT": int(os.environ.get("REDIS_CONFIG_PORT", 6379)),
+    "DB": int(os.environ.get("REDIS_CONFIG_DB", 0)),
+}
 
 
 CELERY_BROKER_URL = os.environ.get('CELERY_BROKER_URL')

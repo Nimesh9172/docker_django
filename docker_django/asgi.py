@@ -10,9 +10,8 @@ https://docs.djangoproject.com/en/5.2/howto/deployment/asgi/
 import os
 
 from channels.routing import ProtocolTypeRouter, URLRouter
-from channels.auth import AuthMiddlewareStack
-from django.urls import path
 from django.core.asgi import get_asgi_application
+from docker_django.jwt_auth_middleware import JWTAuthMiddleware
 import app.routing
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'docker_django.settings')
@@ -22,7 +21,7 @@ application = get_asgi_application()
 
 application = ProtocolTypeRouter({
     "http": application,
-     "websocket": AuthMiddlewareStack(
+     "websocket": JWTAuthMiddleware(
         URLRouter(
             app.routing.websocket_urlpatterns
         )
