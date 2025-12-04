@@ -13,11 +13,12 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 import os
 from pathlib import Path
 from datetime import timedelta
+import logging
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-# from dotenv import load_dotenv
-# load_dotenv()
+from dotenv import load_dotenv
+load_dotenv()
 
 
 # Quick-start development settings - unsuitable for production
@@ -45,7 +46,8 @@ INSTALLED_APPS = [
 
     'rest_framework',
     'app',
-    'django_celery_beat'
+    'django_celery_beat',
+    'firebase_app',
 ]
 
 MIDDLEWARE = [
@@ -196,8 +198,17 @@ REDIS_CONFIG = {
     "DB": int(os.environ.get("REDIS_CONFIG_DB", 0)),
 }
 
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s [%(levelname)s] %(name)s: %(message)s',
+    datefmt='%Y-%m-%d %H:%M:%S',
+)
+
 
 CELERY_BROKER_URL = os.environ.get('CELERY_BROKER_URL')
 CELERY_RESULT_BACKEND = os.environ.get('CELERY_RESULT_BACKEND')
 
 KAFKA_BROKER_URL = os.environ.get('KAFKA_BROKER_URL')
+IS_FIREBASE_ENABLED = os.environ.get('IS_FIREBASE_ENABLED', 'False').lower() == 'true'
+FIREBASE_DB_URL = os.environ.get('FIREBASE_DB_URL', '')
